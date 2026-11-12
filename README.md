@@ -1,37 +1,45 @@
 # SANEZO X ULTRA
 
-A multi-user bot platform starter with a dark-purple web portal and an Express API.
+Website and Node.js backend starter for a future messaging bot service.
 
-## Current status
+## Status
 
-This repository contains the initial web/API scaffold. The pairing screen is intentionally a preview; device pairing is not active yet.
+- Website: static Vercel deployment from `website/`.
+- Commands: `.menu`, `.ping`, `.alive` registered in `lib/commands.js`.
+- Backend: authenticated command API, ready for testing on a separate Node host.
+- **Not yet connected to WhatsApp**: no WhatsApp provider credentials, webhook integration, device pairing, user sessions, or production backend hosting is configured.
 
-## Requirements
+## Local setup
 
-- Node.js 20 or newer
-- npm
-
-## Run locally
+Install Node.js 20+, then:
 
 ```bash
 npm install
 cp .env.example .env
+npm test
 npm start
 ```
 
-Open http://localhost:3000. Health check: http://localhost:3000/api/health
+Set `COMMAND_API_KEY` to a long randomly generated secret in your local `.env` or host's secret settings. Never commit it.
 
-## Hosting
+## API
 
-The app listens on the `PORT` environment variable and binds to `0.0.0.0`, as expected by common Node hosting platforms.
+- `GET /api/health` — public health check
+- `GET /api/commands` — requires `x-api-key` header
+- `POST /api/commands/execute` — requires `x-api-key` header and JSON body `{"message":".ping"}`
 
-## Security notes
+The execute API is for a trusted backend integration only; do not expose your key in browser code or the public Vercel website. The command endpoint does not send WhatsApp messages.
 
-- Never commit `.env`, database passwords, API keys, WhatsApp verification codes, or session credentials.
-- Each account must have its own isolated session and explicit owner authorization.
-- Add authentication, persistent storage, quotas, abuse prevention, and operational monitoring before inviting users.
-- Free hosting plans may sleep or impose CPU, memory, and connection limits; test capacity before advertising support for 100+ users.
-- Use official, supported messaging integrations where possible and comply with provider terms and applicable privacy rules.
+## Deployment
+
+Vercel hosts the static `website/` directory. Deploy the Node backend separately on a service that supports Node.js processes and environment secrets. Free tiers may sleep or have usage limits. Connect a supported messaging provider only after configuring authenticated webhook verification, user consent, and secure session handling.
+
+## Security
+
+- Never commit passwords, `.env`, API keys, verification codes, or session credentials.
+- Keep each user's account data isolated and require explicit account-owner authorization.
+- Add persistent storage, authentication, quotas, and monitoring before opening multi-user access.
+- Follow messaging provider rules; do not send unsolicited messages.
 
 ## License
 
